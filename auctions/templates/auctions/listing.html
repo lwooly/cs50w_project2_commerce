@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %} 
+
+{% block body %} 
+    <div class="container">
+        <div class="row">
+                <div class="card m-3 col-3" style="width: 18rem;">
+                    <img class="card-img-top" src="{{ listing.image_url }}" alt="Photo of {{ listing.title }} listing" style="height: 10rem; width: auto;">
+                    <div class="card-body">
+                    <h5 class="card-title">Listing {{ listing.id }} - {{listing.listing_title}}</h5>
+                    <p class="card-text">{{listing.listing_description}}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Current Bid: £{{ listing.bid }}</li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="#" class="btn btn-primary">Add to watchlist</a>
+                    </div>
+                </div>
+        </div>
+    </div>
+{% endblock %}

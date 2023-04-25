@@ -1,0 +1,25 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1>Create New Listing</h1>
+    <form action="{% url 'create_listing' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="listing_title">Listing title</title></label>
+            <input autocomplete="off" type="text" class="form-control" name="listing_title" id="listing_title" placeholder="Enter listing title">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input autocomplete="off" type="text" class="form-control" name="description" id="description" placeholder="Enter listing description">
+        </div>
+        <div class="form-group">
+            <label for="description">Starting Bid</label>
+            <input autocomplete="off" type="number" class="form-control" name="bid" id="bid" placeholder="Enter starting bid">
+        </div>
+        <div class="form-group">
+            <label for="image_url">Image URL</label>
+            <input autocomplete="off" type="url" class="form-control" name="image_url" id="image_url" placeholder="Enter image URL">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}

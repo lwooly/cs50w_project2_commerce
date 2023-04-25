@@ -2,6 +2,24 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-
-    TODO
+    
+    <div class="container">
+        <div class="row">
+            {% for item in listings %}
+                <div class="card m-3 col-3" style="width: 18rem;">
+                    <img class="card-img-top" src="{{ item.image_url }}" alt="Photo of {{ item.title }} listing" style="height: 10rem; width: auto;">
+                    <div class="card-body">
+                        <h5 class="card-title">Listing {{ item.id }} - {{ item.listing_title }}</h5>
+                        <p class="card-text">{{ item.listing_description }}</p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Current Bid: £{{ item.bid }}</li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="{% url 'listing' item.listing_title %}" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
