@@ -89,3 +89,36 @@ def listing(request, listing):
     return render(request, "auctions/listing.html", {
         "listing":details
     })
+
+
+def watchlist(request):
+    
+    if request.method =="POST":
+        #get user object
+        user = request.user
+
+        #find the listing.id from the submitted form
+        listing_id = int(request.POST["listing_id"])
+
+        #find listing from id
+        listing = Auction_listing.objects.get(pk=listing_id)
+
+        if "add_watchlist_item" in request.POST:
+            #add the listing to the watchlist
+            user.watchlist.add(listing)
+
+        elif "remove_watchlist_item" in request.POST:
+            user.watchlist.remove(listing)
+
+        return HttpResponseRedirect(reverse("watchlist"))
+
+    else:
+        #get current user
+        user = request.user
+        #get watchlist for current user
+        watchlist = user.watchlist.all()
+        print(watchlist)
+        return render(request, "auctions/watchlist.html", {
+            "watchlist":watchlist
+        })
+    
