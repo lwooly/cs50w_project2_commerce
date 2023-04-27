@@ -12,7 +12,12 @@
                         <h5 class="card-title">Listing {{ item.id }} - {{ item.listing_title }}</h5>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Current Bid: £{{ item.bid }}</li>
+                        {% if item.max_bid %}
+                            <li class="list-group-item">Current Bid: £{{ item.max_bid }}</li>
+                        {% else %}
+                            <li class="list-group-item">Current Bid: £0</li>
+                        {% endif %}
+
                     </ul>
                     <div class="card-body">
                         <a href="{% url 'listing' item.listing_title %}" class="btn btn-primary">Details</a>

@@ -3,13 +3,16 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.db.models import Max
+from django import forms
 
-from .models import User, Auction_listing
+from .models import User, Auction_listing, Bid
 
 
 def index(request):
+    listings = Auction_listing.objects.all().annotate(max_bid = Max('bids__bid'))
     return render(request, "auctions/index.html", {
-        "listings":Auction_listing.objects.all()
+        "listings":listings
     })
 
 
@@ -77,17 +80,71 @@ def create_listing(request):
         user = request.user
 
         #save this data to the Auction model.
-        f = Auction_listing(listing_title=list_title, description=list_description, bid=list_bid, image_url=list_image_url, seller=user)
-        f.save()
+        listing_obj = Auction_listing(listing_title=list_title, description=list_description, image_url=list_image_url, seller=user)
+        #get and print id of this listing obj
+        listing_obj.save()
+       
+        #get current user to add to bid
+        user = request.user
+
+        #create starting bid
+        bid_obj = Bid(bid=list_bid, listing=listing_obj, bidder=user)
+        bid_obj.save()
+
+        a = bid_obj.bid
+        print(a)
+        
         return HttpResponseRedirect(reverse("index"))
 
     return render(request, "auctions/create_listing.html")
 
 
 def listing(request, listing):
-    details = Auction_listing.objects.filter(listing_title=listing).first()
+
+    #get listing object and related bids
+    if request.method == "POST":
+        listing = request.POST["post_listing_title"]
+
+    #get listing object 
+    listing_obj = Auction_listing.objects.filter(listing_title=listing).first()
+    
+    #get highest bid
+    bid_obj = listing_obj.bids.order_by('-bid').first()
+
+    #catch error where no bid
+    max_bid = bid_obj.bid if bid_obj else None
+
+    if not max_bid:
+            max_bid = 0
+
+    #set error
+    error = None
+
+    #if new bid submitted via POST
+    if request.method == "POST":
+        
+        #get current user:
+        user = request.user
+
+        # get new bid
+        new_bid = int(request.POST["add_bid"])
+
+        #check that bid is higher than existing
+        if new_bid > int(max_bid):
+            #create new bid object:
+            f=Bid(bid=new_bid, listing=listing_obj, bidder=user)
+            f.save()
+    
+            return HttpResponseRedirect(reverse('listing', args=[listing_obj.listing_title]))
+
+        else:
+            # invalid numerical entry
+            error = "Error: Enter a bid higher than the current"
+              
     return render(request, "auctions/listing.html", {
-        "listing":details
+        "listing":listing_obj,
+        "max_bid":max_bid,
+        "error":error
     })
 
 
@@ -116,8 +173,7 @@ def watchlist(request):
         #get current user
         user = request.user
         #get watchlist for current user
-        watchlist = user.watchlist.all()
-        print(watchlist)
+        watchlist = user.watchlist.all().annotate(max_bid = Max('bids__bid'))
         return render(request, "auctions/watchlist.html", {
             "watchlist":watchlist
         })

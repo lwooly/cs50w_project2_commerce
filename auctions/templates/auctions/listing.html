@@ -4,13 +4,30 @@
             <h2>Listing {{ listing.id }} - {{listing.listing_title}}</h2>
             <img class="card-img-top" src="{{ listing.image_url }}" alt="Photo of {{ listing.title }} listing" style="height: 10rem; width: auto;">
             <p class="card-text">{{ listing.description }}</p>
-            <p>Current Bid: £{{ listing.bid }}</p>
+            {% if max_bid %}
+                <p>Current Bid: £{{ max_bid }}</p>
+            {% else %} 
+                <p>Current Bid: £0</p>
+            {% endif %} 
+
             {% if user.is_authenticated %}
-            <form action="{% url 'watchlist' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="add_watchlist_item" value="1">
-                <input type="hidden" name="listing_id" value="{{ listing.id }}">
-                <button class="btn btn-primary">Add to watchlist</button>
-            </form>
+                
+                <form action="{% url 'watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_watchlist_item" value="1">
+                    <input type="hidden" name="listing_id" value="{{ listing.id }}">
+                    <button type="submit" class="btn btn-primary">Add to watchlist</button>
+                </form>
+                <form action="{% url 'listing' listing=listing.listing_title %}" method="post">
+                    {% csrf_token %}
+                    <input type="number" name="add_bid">
+                    <input type="hidden" name="post_listing_title" value="{{ listing.listing_title }}">
+                    <button type="submit" class="btn btn-primary">Bid</button>
+                </form>
+                {{ error }}
+                {% if user.request == listing.seller %}
+                {% endif %} 
+
+                
             {% endif %} 
 {% endblock %}
