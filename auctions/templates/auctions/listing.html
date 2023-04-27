@@ -9,6 +9,7 @@
             {% else %} 
                 <p>Current Bid: £0</p>
             {% endif %} 
+            
 
             {% if user.is_authenticated %}
                 
@@ -24,8 +25,14 @@
                     <input type="hidden" name="post_listing_title" value="{{ listing.listing_title }}">
                     <button type="submit" class="btn btn-primary">Bid</button>
                 </form>
+                {% if error %} 
                 {{ error }}
+                {% endif %}
+
+                <p> Listed by: {{ listing.seller }}</p>
                 {% if user.request == listing.seller %}
+                END SALE
+
                 {% endif %} 
 
                 
