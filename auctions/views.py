@@ -10,7 +10,10 @@ from .models import User, Auction_listing, Bid, Comment
 
 
 def index(request):
-    listings = Auction_listing.objects.all().annotate(max_bid = Max('bids__bid'))
+    
+    listing_objs = Auction_listing.objects.all().annotate(max_bid = Max('bids__bid'))
+    listings = listing_objs.order_by('id')
+
     return render(request, "auctions/index.html", {
         "listings":listings
     })
