@@ -9,15 +9,22 @@
                 <div class="card m-3 col-3" style="width: 18rem;">
                     <img class="card-img-top" src="{{ item.image_url }}" alt="Photo of {{ item.title }} listing" style="height: 10rem; width: auto;">
                     <div class="card-body">
-                        <h5 class="card-title">Listing {{ item.id }} - {{ item.listing_title }}</h5>
+                        <div class="d-flex justify-content-between">
+                            <div class="card-title-wrapper" style="height: 50px">
+                                <h5 class="card-title">Listing {{ item.id }} - {{ item.listing_title }}</h5>
+                                {% if item.closed == True %}
+                                    <h3 class=" card-text text-muted">Bidding closed</h3>
+                                {% endif %}
+                            </div>
+                        </div>
                         <p class="card-text">{{ item.listing_description }}</p>
                     </div>
                     <ul class="list-group list-group-flush">
                         {% if item.max_bid %}
-                        <li class="list-group-item">Current Bid: £{{ item.max_bid }}</li>
-                    {% else %}
-                        <li class="list-group-item">Current Bid: £0</li>
-                    {% endif %}
+                            <li class="list-group-item ">Winning Bid: £{{ item.max_bid }}</li>
+                        {% else %}
+                            <li class="list-group-item">Winning Bid: £0</li>
+                        {% endif %}
                     </ul>
                     <div class="card-body d-flex justify-content-center">
                         <a href="{% url 'listing' item.listing_title %}" class="btn btn-primary  mr-2">Details</a>

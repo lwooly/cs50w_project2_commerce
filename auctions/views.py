@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.db.models import Max
 from django import forms
 
-from .models import User, Auction_listing, Bid
+from .models import User, Auction_listing, Bid, Comment
 
 
 def index(request):
@@ -103,8 +103,9 @@ def listing(request, listing):
 
     #get listing object and related bids
     if request.method == "POST":
-        listing = request.POST["post_listing_title"]
 
+        listing = request.POST["post_listing_title"]
+    
     #get listing object 
     listing_obj = Auction_listing.objects.filter(listing_title=listing).first()
     
@@ -113,15 +114,42 @@ def listing(request, listing):
 
     #catch error where no bid
     max_bid = bid_obj.bid if bid_obj else None
-
     if not max_bid:
             max_bid = 0
 
     #set error
     error = None
 
-    #if new bid submitted via POST
+    # get comments for this listing
+
+    comments = listing_obj.listing_comments.all()
+
+    #if form submitted via POST
     if request.method == "POST":
+        if "add_comment" in request.POST:
+            #create new comment
+            f = Comment(comment=request.POST["add_comment"], user=request.user, listing=listing_obj)
+            f.save()
+            return HttpResponseRedirect(reverse('listing', args=[listing_obj.listing_title]))
+            
+
+        if "close_listing" in request.POST:
+            # seller to close listing
+            # setboolean field on Auction listing model
+            listing_obj.closed = True
+            listing_obj.save()
+            #get winning user from max bid object
+            user_win = bid_obj.bidder
+            # record current highest bid user in winner field on Auction listing model.
+            listing_obj.winner = user_win
+            listing_obj.save()
+            # render page
+            return HttpResponseRedirect(reverse('listing', args=[listing_obj.listing_title]))
+
+            # show the winner of the aution.
+
+            # if user is the winner add a specific note
+        
         
         #get current user:
         user = request.user
@@ -144,7 +172,8 @@ def listing(request, listing):
     return render(request, "auctions/listing.html", {
         "listing":listing_obj,
         "max_bid":max_bid,
-        "error":error
+        "error":error,
+        "comments": comments
     })
 
 

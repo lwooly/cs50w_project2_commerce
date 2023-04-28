@@ -11,6 +11,9 @@ class Auction_listing(models.Model):
     description = models.CharField(max_length=128)
     image_url = models.URLField(max_length=200)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="winner")
+    closed = models.BooleanField(default=False)
+    category = models.CharField(max_length=32)
 
     def __str__(self):
         return f"Listing {self.id}: {self.listing_title} {self.bid}"
@@ -20,3 +23,9 @@ class Bid(models.Model):
     bid = models.DecimalField(default=0, max_digits=6, decimal_places=2)
     listing = models.ForeignKey(Auction_listing, on_delete=models.CASCADE, related_name="bids")
     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
+
+class Comment(models.Model):
+    comment = models.CharField(max_length=100)
+    listing = models.ForeignKey(Auction_listing, on_delete=models.CASCADE, related_name="listing_comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
+

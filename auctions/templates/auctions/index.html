@@ -8,8 +8,13 @@
             {% for item in listings %}
                 <div class="card m-3 col-3" style="width: 18rem;">
                     <img class="card-img-top" src="{{ item.image_url }}" alt="Photo of {{ item.title }} listing" style="height: 10rem; width: auto;">
-                    <div class="card-body">
-                        <h5 class="card-title">Listing {{ item.id }} - {{ item.listing_title }}</h5>
+                    <div class="card-title-wrapper" style="height: 90px">
+                        <div class="card-body">
+                            <h5 class="card-title">Listing {{ item.id }} - {{ item.listing_title }}</h5>
+                            {% if item.closed == True %}
+                                <h3 class=" card-text text-muted">Bidding closed</h3>
+                            {% endif %}
+                        </div>
                     </div>
                     <ul class="list-group list-group-flush">
                         {% if item.max_bid %}
