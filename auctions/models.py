@@ -8,12 +8,15 @@ class User(AbstractUser):
 
 class Auction_listing(models.Model):
     listing_title = models.CharField(max_length=64)
-    description = models.CharField(max_length=128)
-    image_url = models.URLField(max_length=200)
+    description = models.CharField(max_length=500)
+    image_url = models.URLField(max_length=50000)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="seller")
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="winner", null=True)
     closed = models.BooleanField(default=False)
     category = models.CharField(max_length=32)
+
+    def __str__(self):
+        return f"{self.id}: {self.listing_title}"
 
 
 class Bid(models.Model):
