@@ -80,10 +80,11 @@ def create_listing(request):
         list_description = request.POST["description"]
         list_bid = request.POST["bid"]
         list_image_url = request.POST["image_url"]
+        list_category = request.POST["category"]
         user = request.user
 
         #save this data to the Auction model.
-        listing_obj = Auction_listing(listing_title=list_title, description=list_description, image_url=list_image_url, seller=user)
+        listing_obj = Auction_listing(listing_title=list_title, description=list_description, image_url=list_image_url, seller=user, category=list_category)
         #get and print id of this listing obj
         listing_obj.save()
        
@@ -210,3 +211,28 @@ def watchlist(request):
             "watchlist":watchlist
         })
     
+
+def categories(request):
+    # show a list of unique categories in the project
+    listing_objs = Auction_listing.objects.all()
+    categories = []
+    for listing_obj in listing_objs:
+        category = listing_obj.category
+        if category not in categories:
+            categories.append(category)
+
+    return render(request, "auctions/categories.html", {
+        "categories":categories
+    })
+
+
+
+# create a list of strings from the Auction_objs
+
+def category(request, cat):
+    #get all Auction listings with this category
+    cat_listings = list(Auction_listing.objects.filter(category=cat))
+    print(cat_listings)
+    return render(request, "auctions/category.html", {
+        "listings":cat_listings
+    })

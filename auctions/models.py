@@ -15,9 +15,6 @@ class Auction_listing(models.Model):
     closed = models.BooleanField(default=False)
     category = models.CharField(max_length=32)
 
-    def __str__(self):
-        return f"Listing {self.id}: {self.listing_title} {self.bid}"
-
 
 class Bid(models.Model):
     bid = models.DecimalField(default=0, max_digits=6, decimal_places=2)
