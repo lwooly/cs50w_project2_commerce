@@ -21,6 +21,7 @@
                 <h4 class="text-muted">Actions</h4>
                     {% if listing.closed == True %}
                         <h3 class="text-muted">Bidding closed</h3>
+                        <p>Listing winner: {{ listing.winner }}</p> 
                         {% if user == listing.winner %} 
                             <div class="text-success">
                                 <h4>Congratulations, you have won the bid!</h4>
